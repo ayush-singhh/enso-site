@@ -13,14 +13,14 @@
   <a class="mark" href="/">enso</a>
 
   <h1>Privacy Policy</h1>
-  <p class="stamp">Last updated: August 3, 2026</p>
+  <p class="stamp">Last updated: August 24, 2026</p>
 
   <p>Enso is a meditation app built to be private by default. This policy explains, in plain language, what data the app handles and what happens to it.</p>
 
   <h2>The short version</h2>
   <ul>
     <li>Your meditation data never leaves your device. There are no accounts, no cloud sync, and no backend server.</li>
-    <li>The only thing that leaves your device is anonymous usage analytics (which screens are opened, sessions started/completed), and you can turn that off in the menu at any time.</li>
+    <li>The only thing that leaves your device is anonymous usage analytics (which screens are opened, sessions started/completed) — along with your IP address and the approximate location our analytics provider derives from it, such as your city and country. You can turn all of it off in the menu at any time.</li>
     <li>We don't sell data, show ads, or track you across other apps or websites.</li>
   </ul>
 
@@ -37,6 +37,7 @@
   <p>To understand which parts of the app are used and improve it, Enso sends a small set of first-party product events (for example: "a session was started", "the forest view was opened") to PostHog, an analytics service acting on our behalf.</p>
   <ul>
     <li>Events are associated with a <strong>randomly generated anonymous identifier</strong>, not your name, email, phone number, or any account — the app never collects any of those.</li>
+    <li><strong>IP address and approximate location.</strong> Like any internet request, the events reach PostHog carrying your device's IP address. PostHog records it and uses it to estimate an approximate location — typically city, region and country. This is not GPS and the app never asks for location permission; it is an estimate from your network address, and it can be wrong. It is used only to understand roughly where Enso is being used, and it is never combined with anything that identifies you. Turning analytics off in <strong>Menu → Anonymous Analytics</strong> stops this along with everything else, because nothing is sent at all.</li>
     <li>Analytics are <strong>on by default</strong> and can be turned off anytime in <strong>Menu → Anonymous Analytics</strong>. When off, nothing is sent.</li>
     <li>Analytics data is used only to improve Enso. It is never sold, never used for advertising, and never used to track you across other companies' apps or websites.</li>
     <li>If you're offline, events queue on your device and send when connectivity returns (or never, if you've opted out).</li>
@@ -55,7 +56,7 @@
   <p>If you allow notifications, the app schedules <strong>one local notification per meditation session</strong>, so the completion chime can reach you if your phone is locked when the session ends. It fires from your device — nothing is sent to any server. There are no marketing, reminder, or push notifications of any kind. If you decline notification permission, sessions still work; the chime is simply foreground-only, and the app will never re-ask or nag.</p>
 
   <h2>What we don't collect</h2>
-  <p>No email, phone number, location, contacts, photos, microphone audio, health data, advertising identifier, or any other personal information. The optional display name above stays on your device and is never collected by us. We never receive your payment details. The app requests no permissions except the optional notification permission described above.</p>
+  <p>No email, phone number, contacts, photos, microphone audio, health data, advertising identifier, or any other personal information. <strong>No GPS or device location</strong> — the app never requests location permission, and the only location data that exists is the rough estimate our analytics provider derives from your IP address, described above. The optional display name stays on your device and is never collected by us. We never receive your payment details. The app requests no permissions except the optional notification permission described above.</p>
 
   <h2>Children</h2>
   <p>Enso does not knowingly collect personal information from anyone, including children. All meditation data stays on the device.</p>
