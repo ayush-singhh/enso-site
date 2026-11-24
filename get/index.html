@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ensō Meditation Timer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Five quiet minutes, back to the present. A meditation timer for iPhone with no guiding voice. Every sit plants a tree.">
+<meta name="theme-color" content="#EFF1E6">
+<meta name="apple-itunes-app" content="app-id=6796063642">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ensō: five quiet minutes, back to the present">
+<meta property="og:description" content="A meditation timer with no guiding voice. Just the bell, silence, and you. Every sit plants a tree.">
+<meta property="og:image" content="https://windchimesapp.com/get/img/og.jpg">
+<meta property="og:url" content="https://windchimesapp.com/get">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="preload" as="image" href="img/hero.webp" fetchpriority="high">
+<style>
+/* Layout: one phone-width column. The painting is the hero; its misty sky
+   carries the headline and the download button, so both sit in the first
+   screen of an Instagram in-app browser. A sticky bar keeps the button under
+   the thumb once the hero scrolls away.
+   Palette: the app's own tokens (src/theme/theme.ts). Light only, like the app. */
+:root {
+  --mist: #EFF1E6;       /* colors.background */
+  --paper: #F7F8EF;      /* colors.surface */
+  --ink: #2F3A2E;        /* colors.textPrimary */
+  --ink-deep: #021C10;   /* colors.statsInk, the button */
+  --muted: #637067;      /* colors.textSecondary, AA on mist */
+  --sage: #6B8560;       /* colors.accent */
+  --sage-soft: #A9BF9B;  /* colors.accentSoft */
+  --line: rgba(74,101,73,0.15); /* colors.glassBorder */
+  --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --text: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
+  --col: 34rem;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--mist);
+  color: var(--ink);
+  font: 17px/1.5 var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--sage); outline-offset: 3px; border-radius: 6px; }
+
+.wrap {
+  max-width: var(--col);
+  margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Hero ---------- */
+.hero { position: relative; max-width: var(--col); margin: 0 auto; overflow: hidden; }
+.hero-copy {
+  position: relative; z-index: 1;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 22px);
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.hero-art { /* the painting rises out of the page's mist under the button */
+  width: 100%; margin-top: -40px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 22%);
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand img { width: 40px; height: 40px; border-radius: 10px; box-shadow: 0 1px 3px rgba(2,28,16,.18); }
+.brand span { font: 500 1.4rem/1 var(--display); letter-spacing: .02em; }
+
+h1, h2 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+h1 { font-size: clamp(2.15rem, 9.6vw, 2.9rem); line-height: 1.06; margin-top: 30px; }
+.lede { margin: 14px 0 0; font-size: 1.06rem; color: var(--muted); max-width: 22em; text-wrap: balance; }
+
+/* ---------- Download button ---------- */
+.cta { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 56px; width: 100%; max-width: 20rem; padding: 0 26px;
+  border-radius: 999px; background: var(--ink-deep); color: var(--paper);
+  font: 600 1.06rem/1 var(--text); text-decoration: none; letter-spacing: .005em;
+  box-shadow: 0 6px 18px rgba(2,28,16,.22);
+  transition: transform .15s ease, box-shadow .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.97); box-shadow: 0 3px 10px rgba(2,28,16,.2); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn[aria-disabled="true"] { background: var(--sage-soft); color: var(--ink); box-shadow: none; pointer-events: none; }
+.cta-note { font-size: .86rem; color: var(--muted); margin: 0; }
+
+/* ---------- Sections ---------- */
+section { padding-block: 64px; }
+.eyebrow { font-size: .76rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); margin: 0 0 10px; }
+h2 { font-size: clamp(1.75rem, 7.4vw, 2.2rem); line-height: 1.12; }
+.sub { color: var(--muted); margin: 12px 0 0; }
+
+/* How a sit works */
+.steps { list-style: none; padding: 0; margin: 30px 0 0; display: grid; gap: 22px; counter-reset: step; }
+.steps li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 14px; align-items: start; counter-increment: step; }
+.steps li::before {
+  content: counter(step); width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  border: 1.5px solid var(--sage); color: var(--sage);
+  display: grid; place-items: center; font: 600 1rem/1 var(--display);
+}
+.steps b { display: block; font-weight: 600; font-size: 1.05rem; }
+.steps span { color: var(--muted); font-size: .97rem; }
+
+.phone {
+  margin: 40px auto 0; width: min(78%, 18rem);
+  border-radius: 36px; padding: 9px; background: var(--paper);
+  border: 1px solid var(--line); box-shadow: 0 20px 44px -18px rgba(2,28,16,.35);
+}
+.phone img { border-radius: 28px; width: 100%; aspect-ratio: 600 / 1005; object-fit: cover; }
+
+/* The forest across a year */
+.grow { background: var(--paper); border-block: 1px solid var(--line); }
+.frame {
+  position: relative; margin-top: 28px; border-radius: 24px; overflow: hidden;
+  aspect-ratio: 640 / 1081; max-height: 72vh; width: 100%;
+  background: #DCE3D6; box-shadow: 0 20px 44px -20px rgba(2,28,16,.4);
+}
+.frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s ease; }
+.frame img.on { opacity: 1; }
+.tabs {
+  display: flex; gap: 4px; padding: 4px; margin: 16px auto 0; width: fit-content; max-width: 100%;
+  background: #E4E2E1; border-radius: 999px;
+}
+.tabs button {
+  appearance: none; border: 0; background: transparent; color: var(--muted);
+  font: 500 .95rem/1 var(--text); min-height: 40px; padding: 0 16px; border-radius: 999px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tabs button[aria-selected="true"] { background: var(--paper); color: var(--ink-deep); font-weight: 600; box-shadow: 0 1px 3px rgba(2,28,16,.12); }
+.caption { text-align: center; color: var(--muted); font-size: .95rem; margin: 14px 0 0; min-height: 3em; }
+
+/* What it is, plainly */
+.facts { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 0; }
+.facts li { padding: 18px 0; border-top: 1px solid var(--line); display: grid; gap: 4px; }
+.facts li:last-child { border-bottom: 1px solid var(--line); }
+.facts b { font-family: var(--display); font-weight: 600; font-size: 1.2rem; }
+.facts span { color: var(--muted); font-size: .97rem; }
+
+/* Closing */
+.close { position: relative; text-align: center; overflow: hidden; padding-bottom: 72px; }
+.close-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .4; }
+.close .wrap { position: relative; }
+.close .cta { margin-top: 28px; }
+
+footer { padding-block: 28px 40px; text-align: center; font-size: .85rem; color: var(--muted); }
+footer nav { display: flex; justify-content: center; gap: 22px; margin-bottom: 10px; }
+footer a { text-decoration: none; padding: 8px 2px; }
+footer a:hover { text-decoration: underline; }
+
+/* Sticky bar: appears once the hero button has scrolled away */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: rgba(239,241,230,.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+  transform: translateY(110%); transition: transform .3s ease;
+}
+.dock.show { transform: none; }
+.dock-in { max-width: var(--col); margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.dock-in img { width: 44px; height: 44px; border-radius: 11px; flex: none; }
+.dock-in div { flex: 1; min-width: 0; line-height: 1.25; }
+.dock-in strong { display: block; font-size: .98rem; }
+.dock-in small { color: var(--muted); font-size: .82rem; }
+.dock .btn { width: auto; min-height: 44px; padding: 0 20px; font-size: .95rem; box-shadow: none; }
+
+@media (min-width: 700px) {
+  body { background: linear-gradient(var(--mist), #E3E8DB); }
+  .hero { border-radius: 0 0 28px 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-copy">
+    <a class="brand" href="#" aria-label="Ensō">
+      <img src="img/icon-96.png" width="40" height="40" alt="">
+      <span>Ensō</span>
+    </a>
+    <h1>Five quiet minutes. Back to the present.</h1>
+    <p class="lede">No guiding voice. Just the bell, silence, and you. Every sit plants a tree.</p>
+    <div class="cta">
+      <a class="btn js-store" href="https://apps.apple.com/app/id6796063642">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.59l3.3-3.3a1 1 0 1 1 1.4 1.42l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.42l3.3 3.3V4a1 1 0 0 1 1-1Zm-7 15a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"/></svg>
+        <span class="js-store-label">Get it on the App Store</span>
+      </a>
+      <p class="cta-note js-store-note">For iPhone</p>
+    </div>
+  </div>
+  <img class="hero-art" src="img/hero.webp" width="828" height="1449" alt="A painted Japanese valley: a meadow full of young cedar trees, a waterfall, a red bridge and stone lanterns in the mist." fetchpriority="high">
+</header>
+
+<main>
+  <section aria-labelledby="how">
+    <div class="wrap">
+      <p class="eyebrow">How a sit works</p>
+      <h2 id="how">Open it, pick a length, and sit.</h2>
+      <ol class="steps">
+        <li><div><b>Pick 5 or 11 minutes</b><span>Five counts as fully as eleven. A bus ride is long enough.</span></div></li>
+        <li><div><b>Lock your phone and sit</b><span>Locking the phone is part of the sit. Leave the app for something else and it won't count.</span></div></li>
+        <li><div><b>The bell rings, and a tree is planted</b><span>A wind chime ends the sit, even with the phone locked.</span></div></li>
+      </ol>
+      <div class="phone">
+        <img src="img/timer.webp" width="600" height="1005" loading="lazy" alt="The Ensō timer: a cedar tree inside a circle, the words Be present, and two buttons, 5 min and 11 min.">
+      </div>
+    </div>
+  </section>
+
+  <section class="grow" aria-labelledby="grow">
+    <div class="wrap">
+      <p class="eyebrow">Your forest</p>
+      <h2 id="grow">A practice, one sit at a time.</h2>
+      <p class="sub">Every sit plants a cedar in a painted valley. Look back and see what showing up looks like.</p>
+      <div class="frame" id="frame">
+        <img class="on" src="img/grow-1.webp" width="640" height="1081" alt="The valley on the first day, with one young cedar in the meadow.">
+        <img src="img/grow-2.webp" width="640" height="1081" loading="lazy" alt="After a week, a handful of cedars stand in the meadow.">
+        <img src="img/grow-3.webp" width="640" height="1081" loading="lazy" alt="After a month, the meadow holds dozens of cedars.">
+        <img src="img/grow-4.webp" width="640" height="1081" loading="lazy" alt="After a year, the meadow is a dense cedar forest.">
+      </div>
+      <div class="tabs" role="tablist" aria-label="Show the forest after">
+        <button role="tab" aria-selected="true" aria-controls="frame" id="t0">Day 1</button>
+        <button role="tab" aria-selected="false" aria-controls="frame" id="t1">Week</button>
+        <button role="tab" aria-selected="false" aria-controls="frame" id="t2">Month</button>
+        <button role="tab" aria-selected="false" aria-controls="frame" id="t3">Year</button>
+      </div>
+      <p class="caption" id="caption" aria-live="polite">One sit, one tree.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="plain">
+    <div class="wrap">
+      <p class="eyebrow">What it is</p>
+      <h2 id="plain">A timer, a bell, and a forest. Nothing to follow.</h2>
+      <ul class="facts">
+        <li><b>No voice talking you through it</b><span>You sit in silence until the bell. Nothing to listen to, nothing to keep up with.</span></li>
+        <li><b>Eleven minutes, on purpose</b><span>A nod to kintsugi, the Japanese art of mending broken pottery with gold.</span></li>
+        <li><b>No account</b><span>Your sits are kept on your phone. There is nothing to sign up for.</span></li>
+        <li><b>Built for the long run</b><span>The change comes slowly, with practice. The app doesn't promise a new you in a week.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="close" aria-labelledby="start">
+    <img class="close-art" src="img/mist.webp" width="990" height="558" loading="lazy" alt="">
+    <div class="wrap">
+      <h2 id="start">Start with five minutes.</h2>
+      <p class="sub">The bell, the silence, and your first tree.</p>
+      <div class="cta" id="close-cta">
+        <a class="btn js-store" href="https://apps.apple.com/app/id6796063642">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.59l3.3-3.3a1 1 0 1 1 1.4 1.42l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.42l3.3 3.3V4a1 1 0 0 1 1-1Zm-7 15a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"/></svg>
+          <span class="js-store-label">Get it on the App Store</span>
+        </a>
+        <p class="cta-note js-store-note">For iPhone</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Legal and help">
+      <a href="https://windchimesapp.com/privacy">Privacy</a>
+      <a href="https://windchimesapp.com/support">Support</a>
+    </nav>
+    <p>© 2026 Ensō</p>
+  </div>
+</footer>
+
+<div class="dock" id="dock" aria-hidden="true">
+  <div class="dock-in">
+    <img src="img/icon-96.png" width="44" height="44" alt="">
+    <div><strong>Ensō</strong><small class="js-store-note">Meditation timer for iPhone</small></div>
+    <a class="btn js-store" href="https://apps.apple.com/app/id6796063642" tabindex="-1"><span class="js-store-label">Get</span></a>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---- Store link -------------------------------------------------------
+  // App Store Connect campaign tracking: put your provider token in PT
+  // (App Analytics > Acquisition > Campaigns > Generate a campaign link).
+  // Each Instagram link can name itself with ?c=..., e.g. ?c=bio or ?c=reel-bell,
+  // and that name is passed through as the campaign.
+  var APP_ID = "6796063642";
+  var PT = ""; // provider token, e.g. "123456789"
+  var PLAY_URL = ""; // the Google Play listing, once there is one
+
+  var q = new URLSearchParams(location.search);
+  var campaign = (q.get("c") || "instagram").replace(/[^a-z0-9_-]/gi, "").slice(0, 40) || "instagram";
+  var appStore = "https://apps.apple.com/app/id" + APP_ID + (PT ? "?pt=" + PT + "&ct=" + campaign + "&mt=8" : "");
+
+  var ua = navigator.userAgent || "";
+  var isAndroid = /Android/i.test(ua);
+
+  var buttons = document.querySelectorAll(".js-store");
+  var labels = document.querySelectorAll(".js-store-label");
+  var notes = document.querySelectorAll(".js-store-note");
+
+  if (isAndroid && PLAY_URL) {
+    buttons.forEach(function (b) { b.href = PLAY_URL; });
+    labels.forEach(function (l) { l.textContent = l.closest(".dock") ? "Get" : "Get it on Google Play"; });
+    notes.forEach(function (n) { n.textContent = "For Android"; });
+  } else if (isAndroid) {
+    buttons.forEach(function (b) {
+      if (b.closest(".dock")) { b.hidden = true; return; }
+      b.removeAttribute("href"); b.setAttribute("aria-disabled", "true");
+    });
+    labels.forEach(function (l) { l.textContent = "Coming to Android"; });
+    notes.forEach(function (n) { n.textContent = n.closest(".dock") ? "Coming to Android" : "Ensō is on iPhone for now. Android is on the way."; });
+  } else {
+    buttons.forEach(function (b) { b.href = appStore; });
+  }
+
+  // ---- Sticky download bar ---------------------------------------------
+  var dock = document.getElementById("dock");
+  var heroCta = document.querySelector(".hero .cta");
+  var closeCta = document.getElementById("close-cta");
+  if ("IntersectionObserver" in window && !(isAndroid && !PLAY_URL)) {
+    var seen = { hero: true, close: false };
+    var update = function () {
+      var show = !seen.hero && !seen.close;
+      dock.classList.toggle("show", show);
+      dock.setAttribute("aria-hidden", show ? "false" : "true");
+      dock.querySelector(".btn").tabIndex = show ? 0 : -1;
+    };
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { seen[e.target === heroCta ? "hero" : "close"] = e.isIntersecting; });
+      update();
+    }).observe(heroCta);
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { seen.close = e.isIntersecting; });
+      update();
+    }).observe(closeCta);
+  }
+
+  // ---- The forest across a year ----------------------------------------
+  var imgs = document.querySelectorAll("#frame img");
+  var tabs = document.querySelectorAll(".tabs button");
+  var caption = document.getElementById("caption");
+  var captions = [
+    "One sit, one tree.",
+    "A week of showing up.",
+    "A month in, the meadow is filling.",
+    "A year later, a forest."
+  ];
+  var current = 0, timer = null;
+  function show(i) {
+    current = i;
+    imgs.forEach(function (im, k) { im.classList.toggle("on", k === i); });
+    tabs.forEach(function (t, k) { t.setAttribute("aria-selected", k === i ? "true" : "false"); });
+    caption.textContent = captions[i];
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener("click", function () { stop(); show(i); });
+  });
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+  // Plays through once on its own when it comes into view, then waits for taps.
+  var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!still && "IntersectionObserver" in window) {
+    var played = false;
+    new IntersectionObserver(function (es, ob) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting || played) return;
+        played = true; ob.disconnect();
+        timer = setInterval(function () {
+          if (current >= imgs.length - 1) { stop(); return; }
+          show(current + 1);
+        }, 1800);
+      });
+    }, { threshold: 0.55 }).observe(document.getElementById("frame"));
+  }
+})();
+</script>
+</body>
+</html>
