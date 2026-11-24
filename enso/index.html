@@ -298,6 +298,8 @@ footer a:hover { text-decoration: underline; }
   var APP_ID = "6796063642";
   var PT = ""; // provider token, e.g. "123456789"
   var PLAY_URL = ""; // the Google Play listing, once there is one
+  // Until then, Android visitors get a waitlist (a Google Form that only asks for an email).
+  var WAITLIST_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeubgwzyhcmUX3HkI9VnTxDyuLEY05QTIR1tpiXUVUJ6UV2dw/viewform";
 
   var q = new URLSearchParams(location.search);
   var campaign = (q.get("c") || "instagram").replace(/[^a-z0-9_-]/gi, "").slice(0, 40) || "instagram";
@@ -317,10 +319,10 @@ footer a:hover { text-decoration: underline; }
   } else if (isAndroid) {
     buttons.forEach(function (b) {
       if (b.closest(".dock")) { b.hidden = true; return; }
-      b.removeAttribute("href"); b.setAttribute("aria-disabled", "true");
+      b.href = WAITLIST_URL; b.target = "_blank"; b.rel = "noopener";
     });
-    labels.forEach(function (l) { l.textContent = "Coming to Android"; });
-    notes.forEach(function (n) { n.textContent = n.closest(".dock") ? "Coming to Android" : "Ensō is on iPhone for now. Android is on the way."; });
+    labels.forEach(function (l) { l.textContent = "Join the Android waitlist"; });
+    notes.forEach(function (n) { n.textContent = n.closest(".dock") ? "Coming to Android" : "Ensō is on iPhone for now. We'll email you once, when Android is ready."; });
   } else {
     buttons.forEach(function (b) { b.href = appStore; });
   }
